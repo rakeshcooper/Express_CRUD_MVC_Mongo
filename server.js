@@ -1,6 +1,6 @@
 import express from 'express'
 import path from 'path'
-import posts from './routes/posts.js'  
+import posts from './routes/product.js'  
 const app = express()
 
 const port = process.env.PORT || 8000
@@ -11,7 +11,7 @@ app.use(express.urlencoded({ extended: false }))
 
 
 //routes
-app.use('/api/posts/', posts)
+app.use('/api/products/', posts)
 
 app.listen(port,() => {
     console.log(`The port of ${port} is running`);
