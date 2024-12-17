@@ -1,6 +1,7 @@
 import express from 'express'
-import { createRequire } from 'node:module';
 import fs from 'fs'
+import productVal from '../model/productSchema.js'
+import { createRequire } from 'node:module';
 import path from 'node:path';
 const require = createRequire(import.meta.url);
 const productData = require('../data/product.json');
@@ -33,17 +34,23 @@ router.get('/:id',(req,res,next) => {
 
 //@desc Create product
 //@route POST /api/products
-router.post('/',(req,res,next) => {
-    const newProduct = {
+router.post('/',async(req,res,next) => {
+try{
+        const newProduct = {
         id: rID,
-        title: req.body.title
+        title: req.body.title,
+        part: req.body.part
+        }
+        const productVali = new productVal(newProduct)
+        productData.push(productVali)
+        fs.writeFileSync(path.join('data','product.json'),JSON.stringify(productData),'utf-8')
+        if(!newProduct){ 
+        return res.status(404).json({msg: 'Please include title'})    
+        }
+        res.status(200).json(newProduct)
+    } catch(err){
+        res.status(404).json({msg: err})
     }
-    productData.push(newProduct)
-    fs.writeFileSync(path.join('data','product.json'),JSON.stringify(productData),'utf-8')
-    if(!newProduct){ 
-       return res.status(404).json({msg: 'Please include title'})    
-    }
-    res.status(200).json(newProduct)
 })
 
 
@@ -55,7 +62,7 @@ router.put('/:id',(req,res,next) => {
     if(!Product){ 
        return res.status(404).json({msg: `The id of ${id} is not found`})    
     }
-      Product.title = req.body.title
+    Product.title = req.body.title
     fs.writeFileSync(path.join('data','product.json'),JSON.stringify(productData),'utf-8')
     res.status(200).json(Product)
     console.log(Product);
@@ -70,7 +77,6 @@ router.delete('/:id',(req,res,next) => {
        return res.status(404).json({msg: `The id of ${id} is not found`})    
     }
     const removedProducts = productData.filter((pData) =>  pData.id !== id )
-    // productData = removedProducts  
     fs.writeFileSync(path.join('data','product.json'),JSON.stringify(removedProducts),'utf-8')
     res.status(200).json(tobeDeletedProduct)
     console.log(tobeDeletedProduct);
