@@ -49,14 +49,31 @@ router.post('/',(req,res,next) => {
 
 //@desc Update product
 //@route PUT /api/products
-router.get('/:id',(req,res,next) => {
+router.put('/:id',(req,res,next) => {
     const id = req.params.id
-    const singleProduct = productData.find((pData) =>  pData.id === id )
-    if(!singleProduct){ 
-       return res.status(404).json({msg: 'Product data not found'})    
+    const Product = productData.find((pData) =>  pData.id === id )
+    if(!Product){ 
+       return res.status(404).json({msg: `The id of ${id} is not found`})    
     }
-    res.status(200).json(singleProduct)
+      Product.title = req.body.title
+    fs.writeFileSync(path.join('data','product.json'),JSON.stringify(productData),'utf-8')
+    res.status(200).json(Product)
+    console.log(Product);
 })
 
+//@desc Delete product
+//@route DELETE /api/products
+router.delete('/:id',(req,res,next) => {
+    const id = req.params.id
+    const tobeDeletedProduct = productData.find((pData) =>  pData.id === id )
+    if(!tobeDeletedProduct){ 
+       return res.status(404).json({msg: `The id of ${id} is not found`})    
+    }
+    const removedProducts = productData.filter((pData) =>  pData.id !== id )
+    // productData = removedProducts  
+    fs.writeFileSync(path.join('data','product.json'),JSON.stringify(removedProducts),'utf-8')
+    res.status(200).json(tobeDeletedProduct)
+    console.log(tobeDeletedProduct);
+})
 
 export default router

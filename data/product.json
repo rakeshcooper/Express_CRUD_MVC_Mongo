@@ -1,1 +1,5 @@
-[{"id":"1","title":"Post one"},{"id":"2","title":"Post two"},{"id":"3","title":"Post three"},{"id":"56f8e7fe-ef67-4b47-a687-a15e9b99e2ee","title":"Cooper"}]
+[
+    {"id":"2","title":"Post two"},
+    {"id":"3","title":"Post three"},
+    {"id":"56f8e7fe-ef67-4b47-a687-a15e9b99e2ee","title":"Cooper"}
+]
