@@ -22,4 +22,6 @@ const productValidateSchema = new mongoose.Schema({
     },
 })
 
-export default mongoose.model('productVal',productValidateSchema)
+const productVal = mongoose.model('productVal',productValidateSchema)
+
+export default productVal

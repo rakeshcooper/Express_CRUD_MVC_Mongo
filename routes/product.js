@@ -35,22 +35,22 @@ router.get('/:id',(req,res,next) => {
 //@desc Create product
 //@route POST /api/products
 router.post('/',async(req,res,next) => {
-try{
-        const newProduct = {
+    const newProduct = {
         id: rID,
         title: req.body.title,
         part: req.body.part
         }
         const productVali = new productVal(newProduct)
+        await productVali.validate()
         productData.push(productVali)
         fs.writeFileSync(path.join('data','product.json'),JSON.stringify(productData),'utf-8')
-        if(!newProduct){ 
-        return res.status(404).json({msg: 'Please include title'})    
+        if(newProduct){
+            res.status(201).json(newProduct)     
+        } else {
+            res.status(404).json({msg: 'Invalid data'})
         }
-        res.status(200).json(newProduct)
-    } catch(err){
-        res.status(404).json({msg: err})
-    }
+        
+    
 })
 
 
