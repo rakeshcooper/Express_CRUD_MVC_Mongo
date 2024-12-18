@@ -35,19 +35,23 @@ router.get('/:id',(req,res,next) => {
 //@desc Create product
 //@route POST /api/products
 router.post('/',async(req,res,next) => {
-    const newProduct = {
-        id: rID,
-        title: req.body.title,
-        part: req.body.part
-        }
-        const productVali = new productVal(newProduct)
-        await productVali.validate()
-        productData.push(productVali)
-        fs.writeFileSync(path.join('data','product.json'),JSON.stringify(productData),'utf-8')
-        if(newProduct){
-            res.status(201).json(newProduct)     
-        } else {
-            res.status(404).json({msg: 'Invalid data'})
+        try {
+            const newProduct = {
+            id: rID,
+            title: req.body.title,
+            part: req.body.part
+            }
+            const productVali = new productVal(newProduct)
+            await productVali.validate()
+            productData.push(productVali)
+            fs.writeFileSync(path.join('data','product.json'),JSON.stringify(productData),'utf-8')
+            if(newProduct){
+                res.status(201).json(newProduct)     
+            } else {
+                res.status(404).json({msg: 'Invalid data'})
+            }
+        } catch (error) {
+            res.status(404).json({ msg: error.message })
         }
         
     
@@ -56,13 +60,24 @@ router.post('/',async(req,res,next) => {
 
 //@desc Update product
 //@route PUT /api/products
-router.put('/:id',(req,res,next) => {
+router.put('/:id',async(req,res,next) => {
     const id = req.params.id
     const Product = productData.find((pData) =>  pData.id === id )
+     const index = productData.findIndex((pData) =>  pData.id === id )
     if(!Product){ 
        return res.status(404).json({msg: `The id of ${id} is not found`})    
     }
-    Product.title = req.body.title
+    const updatedProduct = {
+        id: Product.id,
+        title: req.body.title,
+        createAt: Product.createAt
+    }
+    // Product.title = req.body.title
+    console.log(productData);
+    const productVali2 = new productVal(updatedProduct)
+    console.log(productVali2);
+     await productVali2.validate()
+     productData[index] = productVali2
     fs.writeFileSync(path.join('data','product.json'),JSON.stringify(productData),'utf-8')
     res.status(200).json(Product)
     console.log(Product);

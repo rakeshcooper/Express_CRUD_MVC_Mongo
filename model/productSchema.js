@@ -6,10 +6,6 @@ const productValidateSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    part:{
-        type: Number,
-        required: true
-    },
     _id:false,
      createAt: {
         immutable:true,
