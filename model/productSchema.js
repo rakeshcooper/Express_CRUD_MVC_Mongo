@@ -2,11 +2,19 @@ import mongoose from 'mongoose'
 
 const productValidateSchema = new mongoose.Schema({
     id:String,
+    rid:{
+        type: String,
+        required: true
+    },
     title:{
         type: String,
         required: true
     },
-    _id:false,
+     part:{
+        type: Number,
+        required: true
+    },
+    
      createAt: {
         immutable:true,
         type: Date,

@@ -37,16 +37,17 @@ router.get('/:id',(req,res,next) => {
 router.post('/',async(req,res,next) => {
         try {
             const newProduct = {
-            id: rID,
+            rid: rID,
             title: req.body.title,
             part: req.body.part
             }
-            const productVali = new productVal(newProduct)
-            await productVali.validate()
-            productData.push(productVali)
+            // const productVali = new productVal(newProduct)
+            // await productVali.validate()
+            const productdB = await productVal.create(newProduct);
+            productData.push(productdB)
             fs.writeFileSync(path.join('data','product.json'),JSON.stringify(productData),'utf-8')
-            if(newProduct){
-                res.status(201).json(newProduct)     
+            if(productdB){
+                res.status(201).json(productdB)     
             } else {
                 res.status(404).json({msg: 'Invalid data'})
             }
@@ -72,12 +73,11 @@ router.put('/:id',async(req,res,next) => {
         title: req.body.title,
         createAt: Product.createAt
     }
-    // Product.title = req.body.title
     console.log(productData);
-    const productVali2 = new productVal(updatedProduct)
-    console.log(productVali2);
-     await productVali2.validate()
-     productData[index] = productVali2
+    const productVali = new productVal(updatedProduct)
+    console.log(productVali);
+     await productVali.validate()
+     productData[index] = productVali
     fs.writeFileSync(path.join('data','product.json'),JSON.stringify(productData),'utf-8')
     res.status(200).json(Product)
     console.log(Product);
