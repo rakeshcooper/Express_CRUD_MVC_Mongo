@@ -10,8 +10,9 @@ const rID = crypto.randomUUID()
 
 //@desc Gets all posts
 //@route GET /api/products 
-router.get('/',(req,res) => {
-    if(!productData){
+router.get('/',async(req,res) => {
+    const productdB = await productVal.find({});
+    if(!productdB){
        return res.status(404).json({msg: 'Product data not found'})    
     }
     res.status(200).json(productData)
@@ -20,14 +21,15 @@ router.get('/',(req,res) => {
 
 //@desc Gets single product
 //@route GET /api/products
-router.get('/:id',(req,res,next) => {
+router.get('/:id',async(req,res,next) => {
     const id = req.params.id
     console.log(id);
     const singleProduct = productData.find((pData) =>  pData._id === id )
-    if(!singleProduct){ 
+    const productdB = await productVal.findById(id);
+    if(!productdB){ 
        return res.status(404).json({msg: 'Product data not found'})    
     }
-    res.status(200).json(singleProduct)
+    res.status(200).json(productdB)
 })
 
 
@@ -89,16 +91,17 @@ router.put('/:id',async(req,res,next) => {
 
 //@desc Delete product
 //@route DELETE /api/products
-router.delete('/:id',(req,res,next) => {
+router.delete('/:id',async(req,res,next) => {
     const id = req.params.id
-    const tobeDeletedProduct = productData.find((pData) =>  pData.id === id )
-    if(!tobeDeletedProduct){ 
+    const tobeDeletedProduct = productData.find((pData) =>  pData._id === id )
+    const productdB = await productVal.findByIdAndDelete(id);
+    if(!productdB){ 
        return res.status(404).json({msg: `The id of ${id} is not found`})    
     }
-    const removedProducts = productData.filter((pData) =>  pData.id !== id )
+    const removedProducts = productData.filter((pData) =>  pData._id !== id )
     fs.writeFileSync(path.join('data','product.json'),JSON.stringify(removedProducts),'utf-8')
-    res.status(200).json(tobeDeletedProduct)
-    console.log(tobeDeletedProduct);
+    res.status(200).json(productdB)
+    console.log(productdB);
 })
 
 export default router
