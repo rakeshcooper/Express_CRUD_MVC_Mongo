@@ -16,7 +16,6 @@ router.get('/',(req,res) => {
     }
     res.status(200).json(productData)
     console.log(productData);
-    
 })
 
 //@desc Gets single product
@@ -24,7 +23,7 @@ router.get('/',(req,res) => {
 router.get('/:id',(req,res,next) => {
     const id = req.params.id
     console.log(id);
-    const singleProduct = productData.find((pData) =>  pData.id === id )
+    const singleProduct = productData.find((pData) =>  pData._id === id )
     if(!singleProduct){ 
        return res.status(404).json({msg: 'Product data not found'})    
     }
@@ -37,7 +36,7 @@ router.get('/:id',(req,res,next) => {
 router.post('/',async(req,res,next) => {
         try {
             const newProduct = {
-            rid: rID,
+            id: rID,
             title: req.body.title,
             part: req.body.part
             }
@@ -62,25 +61,30 @@ router.post('/',async(req,res,next) => {
 //@desc Update product
 //@route PUT /api/products
 router.put('/:id',async(req,res,next) => {
-    const id = req.params.id
-    const Product = productData.find((pData) =>  pData.id === id )
-     const index = productData.findIndex((pData) =>  pData.id === id )
+    // const id = req.params.id
+      const { id } = req.params
+
+    const Product = productData.find((pData) =>  pData._id === id )
+     const index = productData.findIndex((pData) =>  pData._id === id )
     if(!Product){ 
        return res.status(404).json({msg: `The id of ${id} is not found`})    
     }
     const updatedProduct = {
         id: Product.id,
-        title: req.body.title,
-        createAt: Product.createAt
+        _id:Product._id,
+        title: req.body.title || Product.title,
+        createAt: Product.createAt,
+        // updateAt: Product.createAt
     }
-    console.log(productData);
-    const productVali = new productVal(updatedProduct)
-    console.log(productVali);
-     await productVali.validate()
-     productData[index] = productVali
+    console.log(updatedProduct);
+    // const productVali = new productVal(updatedProduct)
+    // console.log(productVali);
+    //  await productVali.validate()
+     const productdB = await productVal.findByIdAndUpdate(id,updatedProduct);
+     productData[index] = productdB
     fs.writeFileSync(path.join('data','product.json'),JSON.stringify(productData),'utf-8')
-    res.status(200).json(Product)
-    console.log(Product);
+    res.status(200).json(productdB)
+    console.log(productdB);
 })
 
 //@desc Delete product
